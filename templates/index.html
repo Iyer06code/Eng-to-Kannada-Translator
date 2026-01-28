@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>English to Kannada Translator</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🌐 English to Kannada Translator</h1>
+        <p>Translate English text to Kannada with Text-to-Speech</p>
+      </div>
+
+      <div class="main-content">
+        <div class="translation-section">
+          <!-- English Section -->
+          <div class="language-box english-box">
+            <div class="language-header">
+              <h2>English</h2>
+              <button
+                class="speak-btn"
+                onclick="speakEnglish()"
+                title="Speak English"
+              >
+                🔊
+              </button>
+            </div>
+            <textarea
+              id="englishText"
+              class="text-input"
+              placeholder="Enter English text here..."
+              onkeyup="updateCharCount('english')"
+            ></textarea>
+            <div class="char-count">
+              <span id="englishCount">0</span>/500 characters
+            </div>
+          </div>
+
+          <!-- Translate Button -->
+          <div class="button-section">
+            <button class="translate-btn" onclick="translateText()">
+              Translate ➔
+            </button>
+          </div>
+
+          <!-- Kannada Section -->
+          <div class="language-box kannada-box">
+            <div class="language-header">
+              <h2>ಕನ್ನಡ</h2>
+              <button
+                class="speak-btn"
+                onclick="speakKannada()"
+                title="Speak Kannada"
+              >
+                🔊
+              </button>
+            </div>
+            <textarea
+              id="kannadaText"
+              class="text-input"
+              placeholder="Translation will appear here..."
+              readonly
+            ></textarea>
+            <div class="char-count">
+              <span id="kannadaCount">0</span>/500 characters
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Features -->
+        <div class="features-section">
+          <div class="feature">
+            <h3>Features</h3>
+            <ul>
+              <li>✓ Real-time translation</li>
+              <li>✓ Text-to-Speech support</li>
+              <li>✓ Character counter</li>
+              <li>✓ Copy to clipboard</li>
+            </ul>
+          </div>
+
+          <div class="controls">
+            <button class="control-btn" onclick="copyToClipboard()">
+              📋 Copy Translation
+            </button>
+            <button class="control-btn" onclick="clearAll()">
+              🗑️ Clear All
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div id="messageBox" class="message-box"></div>
+
+      <!-- Hidden audio element -->
+      <audio id="audioPlayer" style="display: none"></audio>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

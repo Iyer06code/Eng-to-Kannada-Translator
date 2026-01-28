@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+      .test-item {
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 4px solid #667eea;
+        background: #f8f9fa;
+        border-radius: 4px;
+      }
+      .success {
+        border-left-color: #28a745;
+        color: #28a745;
+      }
+      .error {
+        border-left-color: #dc3545;
+        color: #dc3545;
+      }
+      button {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #764ba2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Application Diagnostics</h1>
+
+    <div class="test-item">
+      <h3>Browser Compatibility</h3>
+      <p id="browser"></p>
+    </div>
+
+    <div class="test-item">
+      <h3>Backend Connection</h3>
+      <button onclick="testBackend()">Test Backend</button>
+      <p id="backend-status"></p>
+    </div>
+
+    <div class="test-item">
+      <h3>Translation API</h3>
+      <button onclick="testTranslation()">Test Translation</button>
+      <p id="translation-status"></p>
+    </div>
+
+    <div class="test-item">
+      <h3>Text-to-Speech</h3>
+      <button onclick="testTTS()">Test TTS</button>
+      <p id="tts-status"></p>
+    </div>
+
+    <div class="test-item">
+      <h3>Quick Access</h3>
+      <button onclick="window.location.href='/'">Go to Translator</button>
+    </div>
+
+    <script>
+      // Detect browser
+      document.getElementById("browser").innerHTML = `
+            <strong>Browser:</strong> ${
+              navigator.userAgent.split("(")[1].split(";")[0]
+            }<br>
+            <strong>JavaScript:</strong> ✅ Enabled
+        `;
+
+      async function testBackend() {
+        const status = document.getElementById("backend-status");
+        status.innerHTML = "⏳ Testing...";
+
+        try {
+          const response = await fetch("/");
+          if (response.ok) {
+            status.innerHTML = "✅ Backend is running correctly!";
+            status.parentElement.classList.add("success");
+          } else {
+            throw new Error(`Status ${response.status}`);
+          }
+        } catch (error) {
+          status.innerHTML = `❌ Backend error: ${error.message}`;
+          status.parentElement.classList.add("error");
+        }
+      }
+
+      async function testTranslation() {
+        const status = document.getElementById("translation-status");
+        status.innerHTML = "⏳ Testing translation...";
+
+        try {
+          const response = await fetch("/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: "Hello" }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            status.innerHTML = `✅ Translation works!<br><em>"Hello" → "${data.translated}"</em>`;
+            status.parentElement.classList.add("success");
+          } else {
+            throw new Error(`Status ${response.status}`);
+          }
+        } catch (error) {
+          status.innerHTML = `❌ Translation error: ${error.message}`;
+          status.parentElement.classList.add("error");
+        }
+      }
+
+      async function testTTS() {
+        const status = document.getElementById("tts-status");
+        status.innerHTML = "⏳ Testing text-to-speech...";
+
+        try {
+          const response = await fetch("/speak", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: "Hello", language: "en" }),
+          });
+
+          if (response.ok) {
+            status.innerHTML =
+              "✅ Text-to-Speech is working!<br>Check your speakers...";
+            status.parentElement.classList.add("success");
+
+            // Try to play audio
+            const data = await response.json();
+            const binaryString = atob(data.audio);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: data.type });
+            const audio = new Audio(URL.createObjectURL(blob));
+            audio.play().catch(() => {
+              status.innerHTML +=
+                "<br><em>(Audio permission may be needed)</em>";
+            });
+          } else {
+            throw new Error(`Status ${response.status}`);
+          }
+        } catch (error) {
+          status.innerHTML = `❌ TTS error: ${error.message}`;
+          status.parentElement.classList.add("error");
+        }
+      }
+
+      // Auto-test on load
+      window.addEventListener("load", () => {
+        testBackend();
+      });
+    </script>
+  </body>
+</html>
