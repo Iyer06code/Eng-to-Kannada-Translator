@@ -26,8 +26,8 @@ def translate():
             return jsonify({'error': 'No text provided'}), 400
         
         # Translate English to Kannada
-        translated = translator.translate(text, src_language='en', dest_language='kn')
-        translated_text = translated['text']
+        translated = translator.translate(text, src='en', dest='kn')
+        translated_text = translated.text
         
         return jsonify({
             'original': text,
