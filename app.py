@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, jsonify
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 import pyttsx3
 import os
 from gtts import gTTS
 import io
 
 app = Flask(__name__)
-translator = Translator()
 
 @app.route('/')
 def index():
@@ -26,8 +25,8 @@ def translate():
             return jsonify({'error': 'No text provided'}), 400
         
         # Translate English to Kannada
-        translated = translator.translate(text, src='en', dest='kn')
-        translated_text = translated.text
+        translator = GoogleTranslator(source='en', target='kn')
+        translated_text = translator.translate(text)
         
         return jsonify({
             'original': text,
